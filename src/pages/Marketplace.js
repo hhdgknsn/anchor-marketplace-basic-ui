@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js';
+import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Program, AnchorProvider, web3, utils } from '@project-serum/anchor';
+import BN from 'bn.js';
 import contractABI from '../contracts/anchor_marketplace.json';
 import '../index.css';
 import logo from '../assets/anchor_logo.png';
@@ -18,6 +22,12 @@ const exampleNFTs = [
   { image: require('../assets/example-nft-10.png'), name: 'Mock NFT 10' },
 ];
 
+const programID = new PublicKey("mktYdagPAAnuHigRD62zLpHshZqx7vpKHjN3fN6MPjy");
+const network = clusterApiUrl('devnet');
+const opts = {
+  preflightCommitment: "processed"
+}
+
 const Marketplace = () => {
   const [items, setItems] = useState([]);
   const [account, setAccount] = useState(null);
@@ -29,11 +39,17 @@ const Marketplace = () => {
   const [walletPopupVisible, setWalletPopupVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(null);
   const [popupMessage, setPopupMessage] = useState(null);
-  const contractAddress = 'mktYdagPAAnuHigRD62zLpHshZqx7vpKHjN3fN6MPjy';
+
+  const connection = new Connection(network, opts.preflightCommitment);
 
   useEffect(() => {
     fetchItems();
   }, []);
+
+  const getProvider = () => {
+    const provider = new AnchorProvider(connection, walletProvider, opts.preflightCommitment);
+    return provider;
+  }
 
   const connectWallet = async (providerName) => {
     if (providerName === 'phantom' && window.solana && window.solana.isPhantom) {

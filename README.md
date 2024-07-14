@@ -1,6 +1,3 @@
-### README.md
-
-```markdown
 # Anchor Marketplace UI
 
 ## Table of Contents
@@ -103,6 +100,8 @@ This will start the development server and open the application in your default 
 2. Enter the marketplace name and fee percentage.
 3. Click on `Initialize Marketplace`.
 
+Note: The current implementation uses mock values for initializing a new marketplace.
+
 ### List a New Item
 
 1. Go to the `List New Item` dropdown.
@@ -113,3 +112,4 @@ This will start the development server and open the application in your default 
 
 1. Browse the listed NFTs.
 2. Click on the `Purchase` or `Delist` button for the desired NFT.
+```
