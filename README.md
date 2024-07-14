@@ -60,6 +60,10 @@ anchor-marketplace-ui/
 - View marketplace metrics such as floor price, 24h volume, market cap, etc.
 - Custom pop-up messages for actions and notifications
 
+## Demo
+
+[Live Demo on Vercel](https://anchor-marketplace-basic-ui.vercel.app)
+
 ## Installation
 
 Before you begin, ensure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed on your machine.
@@ -183,4 +187,3 @@ const initializeMarketplace = async (e) => {
   }
 };
 ```
-
