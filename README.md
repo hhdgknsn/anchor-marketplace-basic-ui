@@ -8,12 +8,18 @@
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+  - [Connect Wallet](#connect-wallet)
+  - [Create a Marketplace](#create-a-marketplace)
+  - [List a New Item](#list-a-new-item)
+  - [Purchase or Delist an NFT](#purchase-or-delist-an-nft)
+- [Technical Details](#technical-details)
+  - [Connecting to Wallets](#connecting-to-wallets)
+  - [Mock Data](#mock-data)
+  - [Interacting with Smart Contracts](#interacting-with-smart-contracts)
 
 ## Introduction
 
-Anchor Marketplace UI is a web-based interface for managing and interacting with NFT marketplaces and listings. It allows users to connect their wallets, create and manage marketplaces, and list, purchase, or delist NFTs.
+Anchor Marketplace UI is a basic web-based interface for managing and interacting with NFT marketplaces and listings. It allows users to connect their wallets, create and manage marketplaces, and list, purchase, or delist NFTs.
 
 ## Project Structure
 
@@ -61,7 +67,7 @@ Before you begin, ensure you have [Node.js](https://nodejs.org/) and [npm](https
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/hhdgknsn/anchor-marketplace-ui.git
+   git clone https://github.com/hhdgknsn/anchor-marketplace-basic-ui.git
    ```
 
 2. Navigate to the project directory:
@@ -100,7 +106,7 @@ This will start the development server and open the application in your default 
 2. Enter the marketplace name and fee percentage.
 3. Click on `Initialize Marketplace`.
 
-Note: The current implementation uses mock values for initializing a new marketplace.
+**Note:** The current implementation uses mock values for initializing a new marketplace.
 
 ### List a New Item
 
@@ -112,4 +118,69 @@ Note: The current implementation uses mock values for initializing a new marketp
 
 1. Browse the listed NFTs.
 2. Click on the `Purchase` or `Delist` button for the desired NFT.
+
+## Technical Details
+
+### Connecting to Wallets
+
+The application allows users to connect to either Phantom or Solflare wallets. The `connectWallet` function handles the connection logic:
+
+```javascript
+const connectWallet = async (providerName) => {
+  if (providerName === 'phantom' && window.solana && window.solana.isPhantom) {
+    try {
+      const resp = await window.solana.connect();
+      setAccount(resp.publicKey.toString());
+      setWalletProvider(window.solana);
+    } catch (error) {
+      console.error("Error connecting to Phantom wallet:", error);
+    }
+  } else if (providerName === 'solflare' && window.solflare && window.solflare.isSolflare) {
+    try {
+      await window.solflare.connect();
+      if (window.solflare.isConnected) {
+        setAccount(window.solflare.publicKey.toString());
+        setWalletProvider(window.solflare);
+      }
+    } catch (error) {
+      console.error("Error connecting to Solflare wallet:", error);
+    }
+  } else {
+    alert("Wallet not detected. Please install Phantom or Solflare wallet.");
+  }
+};
 ```
+
+### Mock Data
+
+The application currently uses mock data for initializing marketplaces and listing NFTs. This can be seen in functions such as `fetchItems` and `initializeMarketplace`.
+
+### Interacting with Smart Contracts
+
+The application is designed to interact with Solana smart contracts using the Anchor framework. However, the current implementation for initializing a marketplace uses mock data:
+
+```javascript
+const initializeMarketplace = async (e) => {
+  e.preventDefault();
+  const marketplaceName = e.target.marketplaceName.value;
+  const fee = e.target.fee.value;
+  setLoading(true);
+  try {
+    const newMarketplace = {
+      name: marketplaceName,
+      fee: `${fee}%`,
+      admin: 'mockPublicKey1234567890',
+      bump: 'mockBumpSeed',
+      treasuryBump: 'mockTreasuryBump',
+      rewardsBump: 'mockRewardsBump',
+    };
+    setMarketplaces([...marketplaces, newMarketplace]);
+    setPopupMessage({ title: "Success", content: "Marketplace initialized successfully!" });
+  } catch (error) {
+    console.error("Error initializing marketplace:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
